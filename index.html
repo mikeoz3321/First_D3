@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <script type="text/javascript" src="d3.js"></script>
+        <style type="text/css">
+         
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            
+            //Width and Height of Circles
+            var w= 700;
+            var h= 1000;
+            var barPadding = 1;
+            
+            //Load the data
+            var dataset = [];    
+            d3.csv("urban_pop_test.csv", function(data) {
+                dataset=data;
+                console.log(data);
+           
+                var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", w)  
+                    .attr("height", h);
+            //Create the bars for the bar chart
+               svg.selectAll("rect")
+                   .data(dataset)
+                   .enter()
+                   .append("rect")
+                   .attr("x", function(d,i){
+                    return i * (w/dataset.length)
+
+                   })
+                   .attr("y", function(d) {
+                        return h - (d["Population"]/1000);  
+                    })
+                   .attr("width", w/dataset.length-barPadding)
+                   .attr("height", function(d){ 
+                      return d["Population"]/1000;
+                   })
+                   .attr("fill", function(d){
+                        if(d["Country Name"]=="Albania") {
+                            return "blue";   
+                        } else {
+                            return "orange";
+                        }
+                   });
+            //Add the labels for the bar chart
+               var format = d3.format("0,000");
+               
+               
+                svg.selectAll("text")
+                   .data(dataset)
+                   .enter()
+                   .append("text")
+                   .text(function(d) {
+                        return format(d["Population"]) + " (" + d["Year"] +")";
+                   })
+                   .attr("x", function(d,i){
+                        return i * (w/dataset.length);
+
+                   })
+                   .attr("y", function(d) {
+                        return h - (d["Population"]/1000);  
+                   })
+                   .attr("transform", function(d,i){
+                       return "rotate(-90 " + i * (w/dataset.length)+"," + h - (d['Population']/1000)+")";
+                    })
+               
+            });
+        </script>
+    </body>
+</html>
