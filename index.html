@@ -5,14 +5,24 @@
         <title>D3 Page Template</title>
         <script type="text/javascript" src="d3.js"></script>
         <style type="text/css">
-         
+            .axis path,
+            .axis line {
+                fill: none;
+                stroke: black;
+                shape-rendering: crispEdges;
+            }
+
+            .axis text {
+                font-family: sans-serif;
+                font-size: 11px;
+            }
         </style>
     </head>
     <body>
         <script type="text/javascript">
             
             //Width and Height of Circles
-            var w= 400;
+            var w= 600;
             var h= 700;
             var padding = 75;
             
@@ -46,10 +56,10 @@
                    .attr("cx", function(d) {
                         return xScale(d["Year"]);
                    })
-                   .attr("r", 5);
+                   .attr("r", 3);
                 
                //Labels for the dots
-               svg.selectAll("text")
+               /*svg.selectAll("text")
                    .data(dataset)
                    .enter()
                    .append("text")
@@ -64,7 +74,30 @@
                    })
                    .attr("font-family", "sans-serif")
                    .attr("font-size", "11px")
-                   .attr("fill", "red");
+                   .attr("fill", "red");*/
+                
+                //Create the axes for the chart
+                
+                
+                var xAxis = d3.svg.axis();
+                xAxis.scale(xScale);
+                xAxis.orient("bottom");
+                xAxis.ticks(5);
+                xAxis.tickFormat(d3.format("d"));
+                svg.append("g")
+                    .attr("class","axis")
+                    .attr("transform", "translate(0," + (h - padding) + ")")
+                    .call(xAxis);
+                
+                var yAxis = d3.svg.axis();
+                yAxis.scale(yScale);
+                yAxis.orient("left");
+                yAxis.ticks(5);
+                svg.append("g")
+                    .attr("class","axis")
+                    .attr("transform", "translate(" + padding + ",0)")
+                    .call(yAxis);
+                
             });
         </script>
     </body>
