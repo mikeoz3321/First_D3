@@ -12,9 +12,9 @@
         <script type="text/javascript">
             
             //Width and Height of Circles
-            var w= 700;
-            var h= 1000;
-            var barPadding = 1;
+            var w= 400;
+            var h= 700;
+            var padding = 75;
             
             //Load the data
             var dataset = [];    
@@ -26,51 +26,45 @@
                     .append("svg")
                     .attr("width", w)  
                     .attr("height", h);
-            //Create the bars for the bar chart
-               svg.selectAll("rect")
+            
+                //Create scales for our values
+                var xScale = d3.scale.linear()
+                     .domain([d3.min(dataset, function(d) { return parseInt(d.Year); }), d3.max(dataset, function(d) { return parseInt(d.Year); })])
+                     .range([padding, w-padding]);
+                var yScale = d3.scale.linear()
+                     .domain([0, d3.max(dataset, function(d) { return parseInt(d.Population); })])
+                     .range([h-padding, padding]);
+               
+               //Create the circles for the scoatterplot
+               svg.selectAll("circle")
                    .data(dataset)
                    .enter()
-                   .append("rect")
-                   .attr("x", function(d,i){
-                    return i * (w/dataset.length)
-
+                   .append("circle")
+                   .attr("cy", function(d) {
+                        return yScale(d["Population"]);
                    })
-                   .attr("y", function(d) {
-                        return h - (d["Population"]/1000);  
-                    })
-                   .attr("width", w/dataset.length-barPadding)
-                   .attr("height", function(d){ 
-                      return d["Population"]/1000;
+                   .attr("cx", function(d) {
+                        return xScale(d["Year"]);
                    })
-                   .attr("fill", function(d){
-                        if(d["Country Name"]=="Albania") {
-                            return "blue";   
-                        } else {
-                            return "orange";
-                        }
-                   });
-            //Add the labels for the bar chart
-               var format = d3.format("0,000");
-               
-               
-                svg.selectAll("text")
+                   .attr("r", 5);
+                
+               //Labels for the dots
+               svg.selectAll("text")
                    .data(dataset)
                    .enter()
                    .append("text")
                    .text(function(d) {
-                        return format(d["Population"]) + " (" + d["Year"] +")";
-                   })
-                   .attr("x", function(d,i){
-                        return i * (w/dataset.length);
-
+                        return d["Country Name"];
                    })
                    .attr("y", function(d) {
-                        return h - (d["Population"]/1000);  
+                        return yScale(d["Population"]);
                    })
-                   .attr("transform", function(d,i){
-                       return "rotate(-90 " + i * (w/dataset.length)+"," + h - (d['Population']/1000)+")";
-                    })
-               
+                   .attr("x", function(d) {
+                        return xScale(d["Year"]);
+                   })
+                   .attr("font-family", "sans-serif")
+                   .attr("font-size", "11px")
+                   .attr("fill", "red");
             });
         </script>
     </body>
